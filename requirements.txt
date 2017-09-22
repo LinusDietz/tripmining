@@ -1,0 +1,14 @@
+geopy
+scipy
+pytest
+xmltodict
+pandas
+numpy
+astral
+sortedcontainers
+pymongo
+tweepy
+networkx
+bidict
+infomap
+humanfriendly
