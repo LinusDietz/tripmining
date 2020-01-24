@@ -12,7 +12,7 @@ setup(
     license='MIT',
     author='Linus Dietz',
     author_email='linus.dietz@tum.de',
-    description='A Python library to mine trips from check-in based data.',
+    description='A Python module for mining trips from check-in based data',
     install_requires=['geopy',
                       'scipy',
                       'pytest',
