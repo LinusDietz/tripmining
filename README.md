@@ -28,7 +28,7 @@ def mine_trips(person):
 
 ## Authors
 
-[Linus Dietz](https://www.cm.in.tum.de/en/research-group/linus-dietz/)
-Avradip Sen
-Lukas Vorwerk
-Leonardo Tonetto
+* [Linus Dietz](https://www.cm.in.tum.de/en/research-group/linus-dietz/)
+* Avradip Sen
+* Lukas Vorwerk
+* Leonardo Tonetto
