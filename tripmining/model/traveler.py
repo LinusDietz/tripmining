@@ -31,23 +31,18 @@ class Traveler:
         :param user:
         :return: a list of trips
         """
-        last_home_checkin_before_trip = None
         current_travel_checkins = list()
         for checkin in self.__get_filtered_sorted_checkins(user.checkins):
-            if not last_home_checkin_before_trip:
-                last_home_checkin_before_trip = checkin
             if user.checkin_at_home_location(checkin) or user.is_last_checkin(checkin):
                 # Travel is ended due to home checkin or end of user checkin stream
                 # only append if there are checkins in the trip.
                 if current_travel_checkins:
-                    trip = Trip(self, current_travel_checkins, [last_home_checkin_before_trip, checkin],
-                                checkin_streaks_gap)
+                    trip = Trip(self, current_travel_checkins, checkin_streaks_gap)
                     if self.min_duration <= trip.duration() and self.min_density <= trip.checkin_density():
                         self.trips.add(trip)
 
                 # clear current trip
                 current_travel_checkins = list()
-                last_home_checkin_before_trip = checkin
                 continue
 
             # Travel is ongoing

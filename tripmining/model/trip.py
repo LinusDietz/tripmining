@@ -13,6 +13,7 @@ from tripmining.model.streak import Streak
 from tripmining.model.day import Day
 from tripmining.model.transition import Transition
 from datetime import timedelta
+from geopy import distance
 
 
 class Trip:
@@ -20,7 +21,7 @@ class Trip:
     A Trip is the sequence of all contiguous check-ins a user made abroad.
     """
 
-    def __init__(self, traveler, checkins: list, home_checkins: list, checkin_streaks_gap: int = 3):
+    def __init__(self, traveler, checkins: list, checkin_streaks_gap: int = 3):
         self.checkin_streaks_gap = checkin_streaks_gap
         self.traveler = traveler
         self.checkins = SortedList(checkins, key=lambda c: c.date)
@@ -30,8 +31,6 @@ class Trip:
         self.blocks = self.__get_blocks()
         self.days = self.__get_days()
         self.streaks = self.__get_streaks()
-        self.last_home_checkin_before_trip = home_checkins[0]
-        self.first_home_checkin_after_trip = home_checkins[-1]
         self.transitions = self.__get_transitions()
         self.speed = self.__get_speed()
 
@@ -80,7 +79,8 @@ class Trip:
             latitude1 = math.radians(pt1[0])
             latitude2 = math.radians(pt2[0])
 
-            a = math.sin(delta_latitude / 2) ** 2 + math.cos(latitude1) * math.cos(latitude2) * math.sin(delta_longitude / 2) ** 2
+            a = math.sin(delta_latitude / 2) ** 2 + math.cos(latitude1) * math.cos(latitude2) * math.sin(
+                delta_longitude / 2) ** 2
             return r * 2. * math.asin(math.sqrt(a))
 
         d = Counter((ci.location.lat, ci.location.lng) for ci in self.checkins)
@@ -251,8 +251,6 @@ class Trip:
                 "traveler_home_location_lng": self.traveler.home_location.lng,
                 "traveler_home_ratio": self.traveler.ratio_tweets_home,
                 "first_checkin": self.first_checkin().date,
-                "last_home_checking": self.last_home_checkin_before_trip.date,
-                "first_home_checking": self.first_home_checkin_after_trip.date,
                 "last_checkin": self.last_checkin().date,
                 "duration": self.duration(),
                 "num_checkins": len(self),
@@ -276,7 +274,7 @@ class Trip:
                 "max_consecutive_unchecked_days": self.__get_max_consecutive_unchecked_days(),
                 "inter_streak_days": self.__get_inter_streak_days(),
                 "checkin_discontinuity": self.__get_checkin_discontinuity(),
-                "max_transition_time": self.__get_max_transition_time(),
+                "max_transition_time": max([transition.time.total_seconds()//3600 for transition in self.transitions], default=0),
                 "checkin_streaks_gap": self.checkin_streaks_gap,
                 "speed": self.speed
                 }
@@ -295,8 +293,6 @@ class Trip:
   "traveler_home_location": "{self.traveler.home_location.name}",
   "first_checkin": "{self.first_checkin().date}",
   "last_checkin": "{self.last_checkin().date}",
-  "last_home_checkin": "{self.last_home_checkin_before_trip.date}",
-  "first_home_checkin": "{self.first_home_checkin_after_trip.date}",
   "duration": {self.duration()},
   "num_checkins": {len(self)},
   "checkin_density": {format(self.checkin_density(), '.2f')},
@@ -322,7 +318,7 @@ class Trip:
   "max_consecutive_unchecked_days": {self.__get_max_consecutive_unchecked_days()},
   "inter_streak_days": {self.__get_inter_streak_days()},
   "checkin_discontinuity": {self.__get_checkin_discontinuity()},
-  "max_transition_time": {self.__get_max_transition_time()},
+  "max_transition_time": {max([transition.time.total_seconds()//3600 for transition in self.transitions], default=0)},
   "checkin_streaks_gap": {self.checkin_streaks_gap},
   "speed": {self.speed}
 }}
@@ -369,17 +365,10 @@ class Trip:
         # add transition for every block change
         for block in self.blocks[1:]:
             current_transition = Transition(previous_block.checkins[0].location, block.checkins[0].location,
-                                            block.checkins[0].date - previous_block.checkins[0].date)
+                                            block.checkins[0].date - previous_block.checkins[-1].date)
             previous_block = block
             transitions.append(current_transition)
         return transitions
-
-    def __get_max_transition_time(self) -> float:
-        max_transition_time = 0
-        for transition in self.transitions:
-            if transition.time > max_transition_time:
-                max_transition_time = transition.time
-        return max_transition_time
 
     def __get_blocks(self) -> SortedList:
         blocks = list()
@@ -495,9 +484,11 @@ class Trip:
         """
         Speed of the trip = total distance in between the transitions / total time of the transitions
         """
-        total_distance = np.sum([transition.distance for transition in self.transitions])
-        total_time = np.sum([transition.time for transition in self.transitions])
+        total_distance = np.sum([distance.distance((transition.from_location.lat, transition.from_location.lng),
+                                                   (transition.to_location.lat, transition.to_location.lng)).km for
+                                 transition in self.transitions])
+        total_time = (np.sum([transition.time for transition in self.transitions]))
         if total_time == 0:
             return -1
-        speed = total_distance / total_time
+        speed = total_distance / (total_time.total_seconds()//3600)
         return speed
