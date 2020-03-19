@@ -6,24 +6,26 @@ from tripmining.model.user import User
 
 class Traveler:
 
-    def __init__(self, user: User, min_duration=7, min_density=0.2, filter_continent=''):
+    def __init__(self, user: User, checkin_streaks_gap=3, min_duration=7, min_density=0.2, filter_continent=''):
         self.countries = Countries()
         self.user_id = user.user_id
         self.dataset = user.dataset
         self.min_duration = min_duration
         self.min_density = min_density
         self.home_location: Location = user.home_location
-        self.ratio_tweets_home = (len(list(filter(lambda ci: user.checkin_at_home_location(ci), user.checkins))) / len(user.checkins))
+        self.ratio_tweets_home = (
+                len(list(filter(lambda ci: user.checkin_at_home_location(ci), user.checkins))) / len(user.checkins))
         self.home_country_code = user.home_country
         self.trips = set()
         self.filter_continent = filter_continent
-        self.__extract_trips(user)
+        self.__extract_trips(user, checkin_streaks_gap)
 
     def __get_filtered_sorted_checkins(self, user_checkins):
-        return filter(lambda x: self.filter_continent == '' or self.countries.get_by_iso(x.location.country_code).continent == self.filter_continent,
+        return filter(lambda x: self.filter_continent == '' or self.countries.get_by_iso(
+            x.location.country_code).continent == self.filter_continent,
                       user_checkins)
 
-    def __extract_trips(self, user: User):
+    def __extract_trips(self, user: User, checkin_streaks_gap):
         """
         This method segments the traveler's checkin stream into trips.
         :param user:
@@ -35,7 +37,7 @@ class Traveler:
                 # Travel is ended due to home checkin or end of user checkin stream
                 # only append if there are checkins in the trip.
                 if current_travel_checkins:
-                    trip = Trip(self, current_travel_checkins)
+                    trip = Trip(self, current_travel_checkins, checkin_streaks_gap)
                     if self.min_duration <= trip.duration() and self.min_density <= trip.checkin_density():
                         self.trips.add(trip)
 
@@ -51,9 +53,11 @@ class Traveler:
         return Traveler(user, min_duration=min_duration, min_density=min_density, filter_continent=filter_continent)
 
     @staticmethod
-    def from_checkins(checkins, dataset, min_duration: int = 7, min_density: float = 0.2, filter_continent=''):
+    def from_checkins(checkins, dataset, checkin_streaks_gap=3, min_duration: int = 7, min_density: float = 0.2,
+                      filter_continent=''):
         user = User(checkins[0].user, checkins, dataset)
-        return Traveler(user, min_duration=min_duration, min_density=min_density, filter_continent=filter_continent)
+        return Traveler(user, checkin_streaks_gap, min_duration=min_duration, min_density=min_density,
+                        filter_continent=filter_continent)
 
     def __str__(self):
         return f"Traveler {self.user_id} from {self.home_location}, with {len(self.trips)} trips."
