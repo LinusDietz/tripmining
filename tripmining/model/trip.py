@@ -488,7 +488,7 @@ class Trip:
                                                    (transition.to_location.lat, transition.to_location.lng)).km for
                                  transition in self.transitions])
         total_time = (np.sum([transition.time for transition in self.transitions]))
-        if total_time == 0:
+        if total_time.total_seconds() == 0:
             return -1
         speed = total_distance / (total_time.total_seconds()//3600)
         return speed
