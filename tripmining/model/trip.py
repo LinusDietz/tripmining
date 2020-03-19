@@ -1,6 +1,9 @@
+import datetime
 import hashlib
 import math
+import operator
 from collections import Counter
+from functools import reduce
 
 import numpy as np
 import pkg_resources
@@ -487,8 +490,8 @@ class Trip:
         total_distance = np.sum([distance.distance((transition.from_location.lat, transition.from_location.lng),
                                                    (transition.to_location.lat, transition.to_location.lng)).km for
                                  transition in self.transitions])
-        total_time = (np.sum([transition.time for transition in self.transitions]))
-        if total_time.total_seconds() == 0:
+        total_time = reduce(operator.add, [transition.time for transition in self.transitions], datetime.timedelta())
+        if not total_time.total_seconds():
             return -1
-        speed = total_distance / (total_time.total_seconds()//3600)
-        return speed
+
+        return total_distance / (total_time.total_seconds() // 3600)
