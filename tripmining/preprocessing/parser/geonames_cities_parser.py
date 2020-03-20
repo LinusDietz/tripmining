@@ -1,4 +1,3 @@
-import collections
 import logging
 import os
 from collections.abc import Generator
@@ -12,7 +11,7 @@ class CitiesParser:
             raise ValueError(f'File {cities_file} is not a regular file.')
         self.cities_file = cities_file
 
-    def parse(self) -> collections.Generator:
+    def parse(self) -> Generator:
         logging.info(f"Parsing {self.cities_file}...")
 
         with open(self.cities_file, 'r', encoding="UTF8") as in_file:

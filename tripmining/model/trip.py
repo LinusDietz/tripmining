@@ -24,10 +24,12 @@ class Trip:
     A Trip is the sequence of all contiguous check-ins a user made abroad.
     """
 
-    def __init__(self, traveler, checkins: list, checkin_streaks_gap: int = 3):
+    def __init__(self, traveler, trip_checkins: list, checkin_streaks_gap: int = 3):
+        if not trip_checkins:
+            raise ValueError("Cannot create trip without check-ins")
+        self.checkins = SortedList(trip_checkins, key=lambda c: c.date)
         self.checkin_streaks_gap = checkin_streaks_gap
         self.traveler = traveler
-        self.checkins = SortedList(checkins, key=lambda c: c.date)
         self.trip_id = hashlib.sha1(
             (str(traveler.user_id) + str(self.checkins[0].date) + str(self.checkins[-1].date)).encode(
                 'utf-8')).hexdigest()[:10]
