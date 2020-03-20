@@ -3,20 +3,20 @@ import hashlib
 import math
 import operator
 from collections import Counter
+from datetime import timedelta
 from functools import reduce
 
 import numpy as np
 import pkg_resources
+from geopy import distance
 from sortedcontainers import SortedList
 
 from tripmining.geo.geocoding import distance_to
 from tripmining.model.block import Block
 from tripmining.model.checkin import Checkin
-from tripmining.model.streak import Streak
 from tripmining.model.day import Day
+from tripmining.model.streak import Streak
 from tripmining.model.transition import Transition
-from datetime import timedelta
-from geopy import distance
 
 
 class Trip:
@@ -496,4 +496,4 @@ class Trip:
         if not total_time.total_seconds():
             return -1
 
-        return total_distance / (total_time.total_seconds() // 3600)
+        return total_distance / (total_time.total_seconds() / 3600)
