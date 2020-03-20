@@ -55,6 +55,11 @@ class Traveler:
     @staticmethod
     def from_checkins(checkins, dataset, checkin_streaks_gap=3, min_duration: int = 7, min_density: float = 0.2,
                       filter_continent=''):
+        if not checkins:
+            raise ValueError("Cannot create a traveler with zero check-ins")
+        if not dataset:
+            raise ValueError("Cannot create a traveler without a dataset identifier")
+
         user = User(checkins[0].user, checkins, dataset)
         return Traveler(user, checkin_streaks_gap, min_duration=min_duration, min_density=min_density,
                         filter_continent=filter_continent)
