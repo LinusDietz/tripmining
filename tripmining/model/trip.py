@@ -254,7 +254,7 @@ class Trip:
                 "traveler_home_location_id": self.traveler.home_location.location_id,
                 "traveler_home_location_lat": self.traveler.home_location.lat,
                 "traveler_home_location_lng": self.traveler.home_location.lng,
-                "traveler_home_ratio": self.traveler.ratio_tweets_home,
+                "traveler_home_ratio": self.traveler.ratio_checkins_home,
                 "first_checkin": self.first_checkin().date,
                 "last_checkin": self.last_checkin().date,
                 "duration": self.duration(),
