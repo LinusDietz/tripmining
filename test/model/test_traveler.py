@@ -34,3 +34,8 @@ class TestTraveler(TestCase):
         traveler = Traveler.from_checkins(checkins, "testDataset")
         self.assertEqual(0, len(traveler.trips))
 
+    def test_create_traveler_to_csv(self):
+        checkins = [Checkin("testUser", self.testLocation, datetime.datetime.now())]
+
+        traveler = Traveler.from_checkins(checkins, "testDataset")
+        self.assertEqual('testUser, testDataset, "", NA, 0, 1.0\n', traveler.to_csv())

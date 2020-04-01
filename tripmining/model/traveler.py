@@ -13,8 +13,7 @@ class Traveler:
         self.min_duration = min_duration
         self.min_density = min_density
         self.home_location: Location = user.home_location
-        self.ratio_tweets_home = (
-                len(list(filter(lambda ci: user.checkin_at_home_location(ci), user.checkins))) / len(user.checkins))
+        self.ratio_checkins_home = user.ratio_checkins_home
         self.home_country_code = user.home_country
         self.trips = set()
         self.filter_continent = filter_continent
@@ -72,4 +71,4 @@ class Traveler:
         return "user_id, dataset, home_location, home_country_code, num_trips, home_checkins\n"
 
     def to_csv(self):
-        return f'{self.user_id}, {self.dataset}, "{str(self.home_location.name)}", {self.home_country_code}, {len(self.trips)}, {self.ratio_tweets_home}\n'
+        return f'{self.user_id}, {self.dataset}, "{str(self.home_location.name)}", {self.home_country_code}, {len(self.trips)}, {self.ratio_checkins_home}\n'

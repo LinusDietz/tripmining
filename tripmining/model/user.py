@@ -14,6 +14,7 @@ class User:
         self.checkins: SortedList = SortedList(checkins, lambda c: c.date)
         self.home_location = self.calculate_home_location()
         self.home_country = self.calculate_home_country()
+        self.ratio_checkins_home = (len(list(filter(lambda ci: self.checkin_at_home_location(ci), self.checkins))) / len(self.checkins))
 
     def checkin_at_home_country(self, checkin: Checkin):
         """
@@ -24,7 +25,7 @@ class User:
         return self.home_country == checkin.location.country_code
 
     def has_clear_home_location(self, threshold: float = 0.5):
-        return (len(list(filter(lambda ci: self.checkin_at_home_location(ci), self.checkins))) / len(self.checkins)) >= threshold
+        return self.ratio_checkins_home >= threshold
 
     def calculate_home_location(self) -> Location:
         def most_common(location_list: list):
