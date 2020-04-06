@@ -2,8 +2,7 @@ Filters:
 
 Checkin Density - 
 
-
-
+    `$$x=\sqrt{2}$$`
 
 ##### Test Data
  
