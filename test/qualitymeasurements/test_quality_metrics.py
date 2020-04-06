@@ -1,25 +1,12 @@
-import hashlib
 import pytest
 from tripmining.model.traveler import Traveler
-from test.qualitymeasurements.utils import prepare_chekins_from_raw_data, prepare_traveler_from_raw_data, load_trip, \
-    imitate_trip_id
+from test.qualitymeasurements.utils import prepare_chekins_from_raw_data, load_trip
 
 # selected individual trips for quality measurement calculation tests
 selected_trips = ["trip1", "trip2", "trip3", "trip4"]
 
 # loading the selected strip from files
 trips = [load_trip(trip) for trip in selected_trips]
-
-traveler_checkins = prepare_traveler_from_raw_data(trips)
-filter_test_combinations = [(7, 0.2, 1, 50000, 1, ["trip1", "trip2", "trip3", "trip4"], traveler_checkins)]
-
-#trip_id = hashlib.sha1(
-#    (str("12345") + str(prepare_chekins_from_raw_data(trips[0])[11].date) + str(
-#        prepare_chekins_from_raw_data(trips[0])[-11].date)).encode(
-#        'utf-8')).hexdigest()[:10]
-
-#generated_trips = Traveler.from_checkins(prepare_traveler_from_raw_data(trips), 'twitter').trips
-#print("sd")
 
 
 @pytest.mark.parametrize('trip', trips)

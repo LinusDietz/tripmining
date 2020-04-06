@@ -44,7 +44,7 @@ class Traveler:
                 if current_travel_checkins:
                     trip = Trip(self, current_travel_checkins, checkin_streaks_gap)
                     if self.min_duration <= trip.duration() and self.min_density <= trip.checkin_density() and \
-                            self.max_inter_streak_days >= trip.inter_streak_days() \
+                            self.max_inter_streak_days >= trip.inter_streak_days() and self.max_speed >= trip.max_speed\
                             and self.max_checkin_discontinuity >= trip.checkin_discontinuity():
                         self.trips.add(trip)
 

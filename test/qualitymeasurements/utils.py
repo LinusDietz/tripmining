@@ -1,18 +1,13 @@
 import hashlib
 import os
-
 import yaml
-
 from tripmining.model.checkin import Checkin
 from tripmining.model.coordinate import Coordinate
 from tripmining.model.location import Location
 import datetime
 from datetime import timedelta
-from random import seed
 import random
 import string
-
-seed(1)
 
 
 def generate_location_id():
@@ -20,6 +15,16 @@ def generate_location_id():
 
 
 def generate_home_checkins(user_id, location, from_date, to_date, number_of_checkins):
+    """
+    Generating some extra checkins to be added before and after a trip. This is to make home location the most frequent
+    checked-in location
+    :param user_id:
+    :param location:
+    :param from_date:
+    :param to_date:
+    :param number_of_checkins:
+    :return:
+    """
     home_checkins = []
     if not from_date:
         for day in range(number_of_checkins, -1, -1):
@@ -55,9 +60,9 @@ def generate_checkins(test_data):
                                   country_code=block_info['location']['code'], category='admin')
         for day in block_info['days']:
             trip_checkins = trip_checkins + generate_trip_checking(test_data['user_id'], block_location,
-                                                                 datetime.datetime.strptime(day['day']['date'],
-                                                                                            '%Y-%m-%d %H:%M:%S'),
-                                                                 day['day']['number_of_checkins'])
+                                                                   datetime.datetime.strptime(day['day']['date'],
+                                                                                              '%Y-%m-%d %H:%M:%S'),
+                                                                   day['day']['number_of_checkins'])
 
     checkins_after_trip = generate_home_checkins(user_id=test_data['user_id'], location=home_location, to_date=None,
                                                  from_date=first_home_after_trip, number_of_checkins=10)
@@ -67,10 +72,15 @@ def generate_checkins(test_data):
 
 def prepare_chekins_from_raw_data(test_data):
     trip_checkins = generate_checkins(test_data)
-    return  trip_checkins
+    return trip_checkins
 
 
 def prepare_traveler_from_raw_data(trips: list):
+    """
+    Construct a traveler by combining a list of single trips
+    :param trips:
+    :return:
+    """
     traveler_chekins = []
     for trip in trips:
         traveler_chekins = traveler_chekins + generate_checkins(trip)
@@ -84,5 +94,11 @@ def load_trip(trip_name):
 
 
 def imitate_trip_id(trip):
+    """
+    Re-producing the trip id which is assiged for each trip in the library. This trip id is mapped with the test name to
+    the trip name to verify filtered trips
+    :param trip:
+    :return:
+    """
     return hashlib.sha1((str(trip["user_id"]) + str(prepare_chekins_from_raw_data(trip)[11].date) +
                          str(prepare_chekins_from_raw_data(trip)[-11].date)).encode('utf-8')).hexdigest()[:10]

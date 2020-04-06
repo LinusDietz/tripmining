@@ -32,6 +32,7 @@ class Trip:
         self.days = self.__get_days()
         self.streaks = self.__get_streaks()
         self.transitions = self.__get_transitions()
+        self.max_speed = self.__get_max_speed()
 
     def first_checkin(self) -> Checkin:
         return self.checkins[0]
@@ -491,3 +492,9 @@ class Trip:
             return -1
         speed = total_distance / (total_time.total_seconds()//3600)
         return speed
+
+    def __get_max_speed(self) -> float:
+        """
+        :return: maximum speed of the transitions
+        """
+        return max([transition.speed for transition in self.transitions])
