@@ -2,7 +2,7 @@ Filters:
 
 Checkin Density - 
 
-    `$$x=\sqrt{2}$$`
+    $$x=\sqrt{2}$$
 
 ##### Test Data
  
@@ -12,8 +12,8 @@ Checkin Density -
     
 ###### Adding new trip
     Test data consists of a set of single trips. Each trip should be included within a yaml file named as 
-    <unique_name>.yml. The <unique_name> of the trip should also be incoded in the file as the name. Please refer the
-    existing trip files for reference.
+    <unique_name>.yml. The <unique_name> of the trip should also be incoded in the file as the name. Please
+    refer the existing trip files for reference.
     
 ###### Adding new traveler
     A new travler is created combining a timely ordered set of trips. These trips must be happnded in a sequence with 
