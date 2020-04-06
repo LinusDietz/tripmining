@@ -12,3 +12,4 @@ networkx
 bidict
 infomap
 humanfriendly
+pyyaml
