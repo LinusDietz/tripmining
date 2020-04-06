@@ -1,6 +1,7 @@
 import datetime
 
-from astral import Astral, AstralError
+from astral import sun, LocationInfo
+from astral.location import Location, Observer
 
 from tripmining.model.coordinate import Coordinate
 
@@ -11,12 +12,11 @@ def day_length(date: datetime, coordinate: Coordinate):
     :param coordinate: the position on the globe
     :return: a floating point duration of the day at
     """
-    a = Astral()
     try:
-        sunrise, sunset = a.daylight_utc(date, coordinate.lat, coordinate.lng)
-    except AstralError:
+        sunrise, sunset = sun.daylight(Observer(coordinate.lat, coordinate.lng), date)
+    except ValueError:
         # check if sun in above or below horizon
-        if a.solar_elevation(date, coordinate.lat, coordinate.lng) > 0:
+        if Location(LocationInfo(latitude=coordinate.lat, longitude=coordinate.lng)).solar_elevation(date) > 0:
             return 24
         else:
             return 0

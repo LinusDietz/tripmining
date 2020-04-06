@@ -18,8 +18,7 @@ class Traveler:
         self.max_speed = max_speed
         self.max_checkin_discontinuity = max_checkin_discontinuity
         self.home_location: Location = user.home_location
-        self.ratio_tweets_home = (
-                len(list(filter(lambda ci: user.checkin_at_home_location(ci), user.checkins))) / len(user.checkins))
+        self.ratio_checkins_home = user.ratio_checkins_home
         self.home_country_code = user.home_country
         self.trips = set()
         self.filter_continent = filter_continent
@@ -63,6 +62,11 @@ class Traveler:
     def from_checkins(checkins, dataset, checkin_streaks_gap=3, min_duration: int = 7, min_density: float = 0.2,
                       max_inter_streak_days=1.0, max_speed=math.inf, max_checkin_discontinuity=1.0,
                       filter_continent=''):
+        if not checkins:
+            raise ValueError("Cannot create a traveler with zero check-ins")
+        if not dataset:
+            raise ValueError("Cannot create a traveler without a dataset identifier")
+
         user = User(checkins[0].user, checkins, dataset)
         return Traveler(user, checkin_streaks_gap, min_duration=min_duration, min_density=min_density,
                         max_inter_streak_days=max_inter_streak_days, max_speed=max_speed,
@@ -76,4 +80,4 @@ class Traveler:
         return "user_id, dataset, home_location, home_country_code, num_trips, home_checkins\n"
 
     def to_csv(self):
-        return f'{self.user_id}, {self.dataset}, "{str(self.home_location.name)}", {self.home_country_code}, {len(self.trips)}, {self.ratio_tweets_home}\n'
+        return f'{self.user_id}, {self.dataset}, "{str(self.home_location.name)}", {self.home_country_code}, {len(self.trips)}, {self.ratio_checkins_home}\n'

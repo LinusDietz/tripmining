@@ -1,19 +1,22 @@
+import datetime
 import hashlib
 import math
+import operator
 from collections import Counter
+from datetime import timedelta
+from functools import reduce
 
 import numpy as np
 import pkg_resources
+from geopy import distance
 from sortedcontainers import SortedList
 
 from tripmining.geo.geocoding import distance_to
 from tripmining.model.block import Block
 from tripmining.model.checkin import Checkin
-from tripmining.model.streak import Streak
 from tripmining.model.day import Day
+from tripmining.model.streak import Streak
 from tripmining.model.transition import Transition
-from datetime import timedelta
-from geopy import distance
 
 
 class Trip:
@@ -21,10 +24,12 @@ class Trip:
     A Trip is the sequence of all contiguous check-ins a user made abroad.
     """
 
-    def __init__(self, traveler, checkins: list, checkin_streaks_gap: int = 3):
+    def __init__(self, traveler, trip_checkins: list, checkin_streaks_gap: int = 3):
+        if not trip_checkins:
+            raise ValueError("Cannot create trip without check-ins")
+        self.checkins = SortedList(trip_checkins, key=lambda c: c.date)
         self.checkin_streaks_gap = checkin_streaks_gap
         self.traveler = traveler
-        self.checkins = SortedList(checkins, key=lambda c: c.date)
         self.trip_id = hashlib.sha1(
             (str(traveler.user_id) + str(self.checkins[0].date) + str(self.checkins[-1].date)).encode(
                 'utf-8')).hexdigest()[:10]
@@ -249,7 +254,7 @@ class Trip:
                 "traveler_home_location_id": self.traveler.home_location.location_id,
                 "traveler_home_location_lat": self.traveler.home_location.lat,
                 "traveler_home_location_lng": self.traveler.home_location.lng,
-                "traveler_home_ratio": self.traveler.ratio_tweets_home,
+                "traveler_home_ratio": self.traveler.ratio_checkins_home,
                 "first_checkin": self.first_checkin().date,
                 "last_checkin": self.last_checkin().date,
                 "duration": self.duration(),
@@ -487,11 +492,11 @@ class Trip:
         total_distance = np.sum([distance.distance((transition.from_location.lat, transition.from_location.lng),
                                                    (transition.to_location.lat, transition.to_location.lng)).km for
                                  transition in self.transitions])
-        total_time = (np.sum([transition.time for transition in self.transitions]))
-        if total_time == 0:
+        total_time = reduce(operator.add, [transition.time for transition in self.transitions], datetime.timedelta())
+        if not total_time.total_seconds():
             return -1
-        speed = total_distance / (total_time.total_seconds()//3600)
-        return speed
+
+        return total_distance / (total_time.total_seconds() / 3600)
 
     def __get_max_speed(self) -> float:
         """
