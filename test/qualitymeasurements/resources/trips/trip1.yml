@@ -1,0 +1,76 @@
+test:
+  name: "trip1"
+  description: 'Trip with better checkin behavior'
+  user_id: 12345
+  attributes:
+    checkin_density: 0.7857
+    inter_streak_days: 0
+    max_transition_speed: 25
+    min_transition_speed: 19
+    checkin_discontinuity: 0
+  home:
+    country: 'US'
+    location:
+      lat: 35.1704985
+      lng: -79.86103374999999
+  last_home_before_trip: '2018-06-29 08:15:27'
+  first_home_after_trip: '2018-07-15 08:15:27'
+  trip:
+    blocks:
+      - block:
+          location:
+            code: 'ES'
+            lat: 40.427939
+            lng: -3.709070
+          days:
+            - day:
+                date: '2018-06-30 18:15:27'
+                number_of_checkins: 2
+            - day:
+                date: '2018-07-01 08:15:27'
+                number_of_checkins: 1
+      - block:
+          location:
+            code: 'ES'
+            lat: 39.591177
+            lng: 2.691493
+          days:
+            - day:
+                date: '2018-07-02 08:15:27'
+                number_of_checkins: 1
+            - day:
+                date: '2018-07-03 08:15:27'
+                number_of_checkins: 1
+      - block:
+          location:
+            code: 'DE'
+            lat: 48.111798
+            lng: 11.564740
+          days:
+            - day:
+                date: '2018-07-05 08:15:27'
+                number_of_checkins: 1
+            - day:
+                date: '2018-07-07 08:15:27'
+                number_of_checkins: 2
+            - day:
+                date: '2018-07-08 08:15:27'
+                number_of_checkins: 1
+            - day:
+                date: '2018-07-09 08:15:27'
+                number_of_checkins: 3
+      - block:
+          location:
+            code: 'UK'
+            lat: 51.528172
+            lng: -0.103378
+          days:
+            - day:
+                date: '2018-07-11 08:15:27'
+                number_of_checkins: 2
+            - day:
+                date: '2018-07-12 08:15:27'
+                number_of_checkins: 1
+            - day:
+                date: '2018-07-13 08:15:27'
+                number_of_checkins: 1

@@ -32,7 +32,6 @@ class Trip:
         self.days = self.__get_days()
         self.streaks = self.__get_streaks()
         self.transitions = self.__get_transitions()
-        self.speed = self.__get_speed()
 
     def first_checkin(self) -> Checkin:
         return self.checkins[0]
@@ -272,11 +271,11 @@ class Trip:
                 "radius_of_gyration": self.radius_of_gyration(),
                 "tripmining_version": pkg_resources.get_distribution("tripmining").version,
                 "max_consecutive_unchecked_days": self.__get_max_consecutive_unchecked_days(),
-                "inter_streak_days": self.__get_inter_streak_days(),
-                "checkin_discontinuity": self.__get_checkin_discontinuity(),
-                "max_transition_time": max([transition.time.total_seconds()//3600 for transition in self.transitions], default=0),
+                "inter_streak_days": self.inter_streak_days(),
+                "checkin_discontinuity": self.checkin_discontinuity(),
+                "max_transition_speed": max([transition.speed for transition in self.transitions], default=0),
+                "min_transition_speed": min([transition.speed for transition in self.transitions], default=0),
                 "checkin_streaks_gap": self.checkin_streaks_gap,
-                "speed": self.speed
                 }
 
     def to_json(self):
@@ -316,11 +315,11 @@ class Trip:
   "std_displacement": {format(np.std(displacements), '.2f')},
   "radius_of_gyration": {format(self.radius_of_gyration(), '.2f')},
   "max_consecutive_unchecked_days": {self.__get_max_consecutive_unchecked_days()},
-  "inter_streak_days": {self.__get_inter_streak_days()},
-  "checkin_discontinuity": {self.__get_checkin_discontinuity()},
-  "max_transition_time": {max([transition.time.total_seconds()//3600 for transition in self.transitions], default=0)},
+  "inter_streak_days": {self.inter_streak_days()},
+  "checkin_discontinuity": {self.checkin_discontinuity()},
+  "max_transition_speed": {max([transition.speed for transition in self.transitions], default=0)},
+  "min_transition_speed": {min([transition.speed for transition in self.transitions], default=0)},
   "checkin_streaks_gap": {self.checkin_streaks_gap},
-  "speed": {self.speed}
 }}
 """
 
@@ -362,7 +361,7 @@ class Trip:
     def __get_transitions(self) -> list:
         transitions = list()
         previous_block = self.blocks[0]
-        # add transition for every block change
+        # add transition for every block - Home to first block and last block to home are neglected
         for block in self.blocks[1:]:
             current_transition = Transition(previous_block.checkins[0].location, block.checkins[0].location,
                                             block.checkins[0].date - previous_block.checkins[-1].date)
@@ -430,7 +429,7 @@ class Trip:
         else:
             return self.duration() - number_of_streaks
 
-    def __get_inter_streak_days(self) -> float:
+    def inter_streak_days(self) -> float:
         """
         inter streak days is a penalty for having distances in between check-in streaks.
         """
@@ -446,7 +445,7 @@ class Trip:
                 number_of_unchecked_days += next_streak.first_date - current_streak.last_date - 1
                 current_streak = next_streak
             inter_streak_unchecked_penalty = number_of_unchecked_days / max_possible_unchecked_days
-            return 1 - inter_streak_unchecked_penalty
+            return inter_streak_unchecked_penalty
 
     def __identify_streaks(self, separation_distance, trip):
         checkins = np.where(trip != 0)[0]
@@ -470,7 +469,7 @@ class Trip:
         days_gap = self.checkin_streaks_gap
         return (self.duration() - 1) // (days_gap + 1)
 
-    def __get_checkin_discontinuity(self) -> float:
+    def checkin_discontinuity(self) -> float:
         """
         Penalty for having the streaks in the trip (not having one streak)
         """
@@ -480,7 +479,7 @@ class Trip:
         else:
             return (len(self.streaks) - 1) / (max_number_of_checkin_gaps - 1)
 
-    def __get_speed(self):
+    def speed(self):
         """
         Speed of the trip = total distance in between the transitions / total time of the transitions
         """
