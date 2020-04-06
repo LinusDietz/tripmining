@@ -88,7 +88,9 @@ def prepare_traveler_from_raw_data(trips: list):
 
 
 def load_trip(trip_name):
-    with open(os.path.join('resources', os.path.join('trips', trip_name + '.yml'))) as file:
+    root_dir = os.getcwd()
+    with open(os.path.join(os.path.join(os.path.join(root_dir, 'test'), 'qualitymeasurements'),
+                           os.path.join('resources', os.path.join('trips', trip_name + '.yml')))) as file:
         test_data = yaml.load(file, Loader=yaml.FullLoader)
         return test_data["test"]
 
