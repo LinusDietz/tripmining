@@ -1,10 +1,10 @@
-This folder contains the test of trip checkins quality metrics. These quality metrics can be used to exclude trips with 
+This folder contains tests for trip checkin quality metrics. These quality metrics can be used to exclude trips with 
 low quality checkin information.
 
-There are 2 test sets in this folder
+There are 2 test sets in the folder
 
-   1.  **test_quality_metrics** - Consists of the test to check the correctness of the metric implementations
-   2.  **test_filters** - Consists of the test for the functionality of the filter mentioned below.
+   1.  **test_quality_metrics** - Consists of tests to check the correctness of the metric implementations
+   2.  **test_filters** - Consists of tests to check the functionality of the filters mentioned below.
 
 ### Filters:
 
@@ -77,7 +77,7 @@ Apply the appropriate threshold values for aforementioned filters while mining t
 
 ###### Adding new trip
    Test data consists of a set of single trips. Each trip should be included within a yaml file named as 
-   <unique_name>.yml. The <unique_name> of the trip should also be incoded in the file as the name. Please
+   <unique_name>.yml. The <unique_name> of the trip should also be included in the file as the name. Please
    refer the existing trip files for reference. 
     
 ###### Adding new traveler
@@ -98,13 +98,13 @@ Apply the appropriate threshold values for aforementioned filters while mining t
 
 ##### Single test script
 
-Execute following shell command in the `qualitymeasurements` folder
+Execute the following shell command in the `qualitymeasurements` folder
 
    `$ pytest <test_case_name>.py`
 
 
 ##### Running all tests
 
-Execute following shell command in the `qualitymeasurements` folder
+Execute the following shell command in the `qualitymeasurements` folder
 
    `$ pytest`
