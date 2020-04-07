@@ -1,6 +1,6 @@
 import pytest
 from tripmining.model.traveler import Traveler
-from test.qualitymeasurements.utils import prepare_chekins_from_raw_data, load_trip
+from test.quality_metrics.utils import prepare_chekins_from_raw_data, load_trip
 
 # selected individual trips for quality measurement calculation tests
 selected_trips = ["trip1", "trip2", "trip3", "trip4"]

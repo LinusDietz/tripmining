@@ -2,7 +2,7 @@
 import pytest
 from tripmining.model.traveler import Traveler
 
-from test.qualitymeasurements.utils import load_trip, prepare_traveler_from_raw_data, imitate_trip_id
+from test.quality_metrics.utils import load_trip, prepare_traveler_from_raw_data, imitate_trip_id
 
 selected_individual_trips = ["trip1", "trip2", "trip3", "trip4"]
 

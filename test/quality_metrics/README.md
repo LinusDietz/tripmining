@@ -96,15 +96,6 @@ Apply the appropriate threshold values for aforementioned filters while mining t
 
 ### Running Tests
 
-##### Single test script
-
-Execute the following shell command in the `qualitymeasurements` folder
-
-   `$ pytest <test_case_name>.py`
-
-
-##### Running all tests
-
-Execute the following shell command in the `qualitymeasurements` folder
+Execute the following shell command in the `root` folder
 
    `$ pytest`

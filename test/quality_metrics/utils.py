@@ -1,6 +1,6 @@
 import hashlib
 import os
-import yaml
+import ruamel.yaml as yaml
 from tripmining.model.checkin import Checkin
 from tripmining.model.coordinate import Coordinate
 from tripmining.model.location import Location
@@ -89,9 +89,9 @@ def prepare_traveler_from_raw_data(trips: list):
 
 def load_trip(trip_name):
     root_dir = os.getcwd()
-    with open(os.path.join(os.path.join(os.path.join(root_dir, 'test'), 'qualitymeasurements'),
+    with open(os.path.join(os.path.join(os.path.join(root_dir, 'test'), 'quality_metrics'),
                            os.path.join('resources', os.path.join('trips', trip_name + '.yml')))) as file:
-        test_data = yaml.load(file, Loader=yaml.FullLoader)
+        test_data = yaml.load(file, Loader=yaml.Loader)
         return test_data["test"]
 
 
