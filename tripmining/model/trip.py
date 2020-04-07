@@ -505,4 +505,4 @@ class Trip:
         """
         :return: maximum speed of the transitions
         """
-        return max([transition.speed for transition in self.transitions])
+        return max([transition.speed for transition in self.transitions], default=0)
