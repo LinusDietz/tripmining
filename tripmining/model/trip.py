@@ -37,6 +37,7 @@ class Trip:
         self.days = self.__get_days()
         self.streaks = self.__get_streaks()
         self.transitions = self.__get_transitions()
+        self.speed = self.__get_speed()
         self.max_speed = self.__get_max_speed()
 
     def first_checkin(self) -> Checkin:
@@ -282,6 +283,7 @@ class Trip:
                 "max_transition_speed": max([transition.speed for transition in self.transitions], default=0),
                 "min_transition_speed": min([transition.speed for transition in self.transitions], default=0),
                 "checkin_streaks_gap": self.checkin_streaks_gap,
+                "speed": self.speed
                 }
 
     def to_json(self):
@@ -326,6 +328,7 @@ class Trip:
   "max_transition_speed": {max([transition.speed for transition in self.transitions], default=0)},
   "min_transition_speed": {min([transition.speed for transition in self.transitions], default=0)},
   "checkin_streaks_gap": {self.checkin_streaks_gap},
+  "speed": {self.speed}
 }}
 """
 
@@ -485,7 +488,7 @@ class Trip:
         else:
             return (len(self.streaks) - 1) / (max_number_of_checkin_gaps - 1)
 
-    def speed(self):
+    def __get_speed(self):
         """
         Speed of the trip = total distance in between the transitions / total time of the transitions
         """
