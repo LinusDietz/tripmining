@@ -13,6 +13,7 @@ install:
 before_script:
   - wget http://download.geonames.org/export/dump/cities15000.zip
   - unzip -o cities15000.zip -d ./dataset/
+  - sudo pip install ruamel.yaml
 
 # command to run tests
 script:
