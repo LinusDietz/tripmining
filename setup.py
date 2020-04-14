@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tripmining',
-    version='0.4.3',
+    version='0.5.0',
     include_package_data=True,
     packages=find_packages(include=["tripmining.model", "tripmining.geo", "tripmining.preprocessing",
                                     "tripmining.preprocessing.parser", "tripmining.dataset"],
