@@ -29,7 +29,7 @@ class Location:
         if self is other:
             return True
         if isinstance(other, self.__class__):
-            if self.location_id == other.location_id:
+            if self.name == other.name:  # only for the foursquare dataset
                 return True
             if self.lat != other.lat:
                 return False
