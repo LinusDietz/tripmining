@@ -32,3 +32,4 @@ def mine_trips(person):
 * Avradip Sen
 * Lukas Vorwerk
 * Leonardo Tonetto
+* Malintha Adikari
