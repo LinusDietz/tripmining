@@ -382,14 +382,14 @@ class Trip:
         blocks = list()
         first_checkin = self.checkins[0]
         current_checkins = [first_checkin]
-        current_location = first_checkin.location.location_id
+        current_location = first_checkin.location
         for checkin in self.checkins[1:]:
-            if current_location == checkin.location.location_id:
+            if current_location == checkin.location:
                 current_checkins.append(checkin)
             else:
                 blocks.append(Block(current_checkins))
                 current_checkins = [checkin]
-                current_location = checkin.location.location_id
+                current_location = checkin.location
 
         blocks.append(Block(current_checkins))
         return SortedList(blocks, key=lambda b: b.first_checkin().date)
