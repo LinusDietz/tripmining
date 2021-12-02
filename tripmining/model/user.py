@@ -1,3 +1,5 @@
+from collections import Counter
+
 from sortedcontainers import SortedList
 
 from tripmining.model.checkin import Checkin
@@ -24,34 +26,26 @@ class User:
         """
         return self.home_country == checkin.location.country_code
 
-    def has_clear_home_location(self, threshold: float = 0.5):
+    def has_clear_home_location(self, use_segmentation_id=False, threshold: float = 0.5):
+        if use_segmentation_id:
+            if not all(map(lambda ci: ci.location.segmentation_id, self.checkins)):
+                raise ValueError("Not all checkins have a segmentation_id")
+            user_location_count = Counter(map(lambda ci: ci.location.segmentation_id, self.checkins))
+            home = max(user_location_count, key=user_location_count.get)
+            return user_location_count[home] / sum(user_location_count.values()) > threshold
+
         return self.ratio_checkins_home >= threshold
 
     def calculate_home_location(self) -> Location:
-        def most_common(location_list: list):
-            """
-            :param location_list:
-            :return: the most common element of the list
-            """
-            return max(set(location_list), key=location_list.count)
-
-        locations = list(map(lambda c: c.location, self.checkins))
-        return most_common(locations)
+        user_locations = Counter(map(lambda ci: ci.location.location_id, self.checkins))
+        return max(user_locations, key=user_locations.get)
 
     def calculate_home_country(self) -> str:
         """
         :return: the country code of the user's residence
         """
-
-        def most_common(countries_list: list):
-            """
-            :param countries_list:
-            :return: the most common element of the list
-            """
-            return max(set(countries_list), key=countries_list.count)
-
-        countries = list(map(lambda c: c.location.country_code, self.checkins))
-        return most_common(countries)
+        user_countries = Counter(map(lambda ci: ci.location.country_code, self.checkins))
+        return max(user_countries, key=user_countries.get)
 
     def is_last_checkin(self, checkin) -> bool:
         return self.checkins[-1] == checkin
